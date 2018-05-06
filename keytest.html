@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <title>Keyboard Event Test</title>
+    <meta charset='UTF-8'/>
+  </head>
+  
+  <body>
+    <div id='container'></div>
+    <script>
+    var c = document.getElementById('container');
+    c.innerText = '[Press a key...]';
+    function handle(e){
+      result = '';
+      result += e.key     +'\n';
+      result += e.code    +'\n';
+      result += e.keyCode +'\n';
+      
+      c.innerText = result;
+    }
+    
+    window.onkeydown = handle;
+    
+    
+    </script>
+  </body>
+</html>
