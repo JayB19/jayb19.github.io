@@ -1,0 +1,98 @@
+<html>
+  <head>
+    <title>Template text-replacer</title>
+    <meta charset="UTF-8"/>
+    <style>
+      body, html{
+        width: 98%;
+        height: 98%;
+      }
+      textarea{
+        resize: none;
+        width: 98%;
+      }
+      button{
+        width: 32%;
+      }
+      *{
+        //border: dashed 1px;
+      }
+      .container{
+        width: 49%;
+        height: 100%;
+        float: left;
+      }
+    </style>
+    <script>
+      window.onload = function(){
+        function $(id){return document.getElementById(id);}
+        var OLD = [
+          $("o_code"),
+          $("o_pre"),
+          $("o_alt"),
+          $("o_utm"),
+          $("o_promo"),
+          $("o_text1"),
+          $("o_text2")
+        ];
+        var NEW = [
+          $("n_code"),
+          $("n_pre"),
+          $("n_alt"),
+          $("n_utm"),
+          $("n_promo"),
+          $("n_text1"),
+          $("n_text2")
+        ];
+        
+        function replace(text, search, replacement) {
+            return text.replace(new RegExp(search, 'g'), replacement);
+        };
+
+        function convert(){
+          var TEXT = OLD[0].value;
+          for(var i=1; i<OLD.length; i++){
+            TEXT = replace(TEXT, OLD[i].value, NEW[i].value);
+          }
+          NEW[0].value = TEXT;
+        }
+
+        function help(){
+          alert("Template ONLY-text changer v0.01 \n JayB19 2018");
+        }
+        function plaintext(){
+          alert("Not implemented yet =(");
+        }
+
+        $('b_convert').onclick = convert;
+        $('b_help').onclick = help;
+        $('b_plaintext').onclick = plaintext;
+      }
+    </script>
+  </head>
+  <body>
+    <div>
+      <button id='b_help'>Help</button>
+      <button id='b_convert'>Convert</button>
+      <button id='b_plaintext'>Plain text</button>
+    </div>
+    <div class='container'>
+      <textarea id="o_code" rows="16" placeholder="Old code here..."></textarea>
+      <textarea id="o_pre" rows="1" placeholder="preheader"></textarea>
+      <textarea id="o_alt" rows="1" placeholder="alt text"></textarea>
+      <textarea id="o_utm" rows="1" placeholder="campaign"></textarea>
+      <textarea id="o_promo" rows="1" placeholder="promo"></textarea>
+      <textarea id="o_text1" rows="4" placeholder="text 1"></textarea>
+      <textarea id="o_text2" rows="4" placeholder="text 2"></textarea>
+    </div>
+    <div class='container'>
+      <textarea id="n_code" rows="16" placeholder="New code here..."></textarea>
+      <textarea id="n_pre" rows="1" placeholder="preheader"></textarea>
+      <textarea id="n_alt" rows="1" placeholder="alt text"></textarea>
+      <textarea id="n_utm" rows="1" placeholder="campaign"></textarea>
+      <textarea id="n_promo" rows="1" placeholder="promo"></textarea>
+      <textarea id="n_text1" rows="4" placeholder="text 1"></textarea>
+      <textarea id="n_text2" rows="4" placeholder="text 2"></textarea>
+    </div>
+  </body>
+</html>
