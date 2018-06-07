@@ -57,6 +57,12 @@
           for(var i=1; i<OLD.length; i++){
             TEXT = replace(TEXT, OLD[i].value, NEW[i].value);
           }
+          //kostyl
+          var s = TEXT.indexOf(OLD[5].value);
+          var e = OLD[5].value.length;
+          TEXT = TEXT.substring(0, s) + NEW[5].value + TEXT.substring(e);
+          
+          //end kostyl
           NEW[0].value = TEXT;
         }
 
