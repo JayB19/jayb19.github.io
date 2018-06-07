@@ -24,6 +24,16 @@
       }
     </style>
     <script>
+      var a;
+      var b;
+      var q;
+      var w;
+      
+        function xx(a, b){
+          for(var i=0; i<a.length; i++){
+            console.log(i+"  "+(a[i]===b[i]));
+          }
+        }
       window.onload = function(){
         function $(id){return document.getElementById(id);}
         var OLD = [
@@ -44,10 +54,14 @@
           $("n_text1"),
           $("n_text2")
         ];
+        a = OLD;
+        b = NEW;
+        q = a[0];
+        w = a[5];
         
         function replace(text, search, replacement) {
-            return text.replace(new RegExp(search, 'g'), replacement);
-        };
+            return text.split(search).join(replacement);
+        }
 
         function convert(){
           var TEXT = OLD[0].value;
