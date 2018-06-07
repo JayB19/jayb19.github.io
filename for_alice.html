@@ -26,7 +26,7 @@
     <script>
 
       window.onload = function(){
-        const VERSION = 0.04;
+        const VERSION = 0.05;
       
         function $(id){return document.getElementById(id);}
         var OLD = [
@@ -54,8 +54,8 @@
 
         function convert(){
           var TEXT = OLD[0].value;
-          TEXT = TEXT.replace(OLD[1], NEW[1]);
-          TEXT = TEXT.replace(OLD[2], NEW[2]);
+          TEXT = TEXT.replace(OLD[1].value, NEW[1].value);
+          TEXT = TEXT.replace(OLD[2].value, NEW[2].value);
           TEXT = replace(TEXT, OLD[3].value, NEW[3].value);
           TEXT = replace(TEXT, OLD[4].value, NEW[4].value);
           TEXT = replace(TEXT, OLD[5].value, NEW[5].value);
