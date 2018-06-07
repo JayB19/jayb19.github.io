@@ -24,17 +24,10 @@
       }
     </style>
     <script>
-      var a;
-      var b;
-      var q;
-      var w;
-      
-        function xx(a, b){
-          for(var i=0; i<a.length; i++){
-            console.log(i+"  "+(a[i]===b[i]));
-          }
-        }
+
       window.onload = function(){
+        const VERSION = 0.03;
+      
         function $(id){return document.getElementById(id);}
         var OLD = [
           $("o_code"),
@@ -54,10 +47,6 @@
           $("n_text1"),
           $("n_text2")
         ];
-        a = OLD;
-        b = NEW;
-        q = a[0];
-        w = a[5];
         
         function replace(text, search, replacement) {
             return text.split(search).join(replacement);
@@ -72,10 +61,16 @@
         }
 
         function help(){
-          alert("Template ONLY-text changer v0.01 \n JayB19 2018");
+          alert("Template ONLY-text changer v"+VERSION+" \n JayB19 2018");
         }
         function plaintext(){
-          alert("Not implemented yet =(");
+          var TEXT = NEW[0].value;
+          var n = TEXT.indexOf('promo');
+          var s = TEXT.lastIndexOf('\"', n)+1;
+          var e = TEXT.indexOf('\"', n);
+          var href = TEXT.substring(s, e);
+          
+          NEW[0].value = replace(NEW[5].value, '<br>', '\n') + "\nGet 16% OFF any order over 5 pages\n\n" + href + "\n\n" + NEW[6].value;
         }
 
         $('b_convert').onclick = convert;
@@ -100,7 +95,7 @@
       <textarea id="o_text2" rows="4" placeholder="text 2"></textarea>
     </div>
     <div class='container'>
-      <textarea id="n_code" rows="16" placeholder="New code here..."></textarea>
+      <textarea id="n_code" rows="16" placeholder="Result here..."></textarea>
       <textarea id="n_pre" rows="1" placeholder="preheader"></textarea>
       <textarea id="n_alt" rows="1" placeholder="alt text"></textarea>
       <textarea id="n_utm" rows="1" placeholder="campaign"></textarea>
