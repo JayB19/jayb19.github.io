@@ -25,22 +25,27 @@
     <script>
       window.onload = function(){
       
-        const VERSION = 0.02;
+        const VERSION = 0.04;
         const TEMPLATE = "<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><html xmlns='http://www.w3.org/1999/xhtml'>  <head>    <title></title>    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>    <meta http-equiv='X-UA-Compatible' content='IE=edge'/>    <meta name='viewport' content='width=device-width, initial-scale=1.0'/>    <meta name='format-detection' content='telephone=no'/>        <style type='text/css'>      table { border-collapse: collapse; }      a{        text-decoration:none !important;       }            td{        padding: 4px 20px;      }            @media all and (max-width: 600px) {        td{          text-align: center !important;          max-width: 100% !important;          display: block !important;        }      }            *{      //border: dashed 1px;      }    </style>  </head>    <body style='margin: 0;-webkit-text-size-adjust: 100%;background: #e1e9ed;'>    <div style='display:none;max-height:0;overflow:hidden;'>      @MARKER_PREHEADER    </div>    <!--[if (gte mso 9)|(IE)]>      <table width='600' align='center' style='border-collapse: collapse;' border='0'>      <tr>      <td valign='top' width='600' style='padding-left: 0px; padding-right: 0px;'>    <![endif]-->        <table cellpadding='8' cellspacing='0' lang='x-outer'  border='0' style='border-collapse: collapse; table-layout: fixed; font-family: \"Open Sans\",sans-serif; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto;' align='center'>      <tbody>        <tr>          <td colspan='4'>            <div><font style='font-size: 12px;color: #1c2837;'>Please add this address to your Contact List to continue receiving emails in your inbox.</font></div>            <div><font style='font-size: 12px;'>No images in this email? <a href='[[view]]' target='_blank' style=''>View the online version</a></font></div>          </td>        </tr>      </tbody>    </table>         <table cellpadding='20' cellspacing='0' lang='x-outer'  border='0' style='border-collapse: collapse; table-layout: fixed; font-family: \"Open Sans\",sans-serif; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; -webkit-box-shadow: 0 3px 9px #313d4c; box-shadow: 0 3px 9px #313d4c;' align='center'>      <tbody>                <!-- LOGO -->        <tr bgcolor='@MARKER_LOGO_COLOR' style='border-radius: 6px'>          <td colspan='2' style='padding:10px 10px 10px 10px;'>            <a target='_blank' href='https://www.@MARKER_SITE/?l=[[autohash]]&utm_source=manual&utm_medium=email&utm_campaign=@MARKER_UTM_CAMPAIGN'>              <img createnew='true'  style='max-width: 100%; height: auto;' src='@MARKER_LOGO_IMAGE' alt='@MARKER_SITE'/>            </a>          </td>          <td align='right' colspan='2' style='padding-left: 0;'>                       <p style='color: #ffffff; font-size: 16px; font-family: \"Open Sans\",sans-serif; font-weight: 60; margin-bottom: 3px; margin-top:0;'><a href='tel:18885334942' style='text-decoration: none;color:#ffffff;'>Tel:+18885334942</a></p>            <p style='color: #ffffff; font-size: 16px; font-family: \"Open Sans\",sans-serif; font-weight: 60; margin-bottom: 3px; margin-top:0;'>SUPPORT 24/7</p>          </td>        </tr>                <!-- BANNER -->        <tr>          <td colspan='4' style='padding:0!important;' bgcolor='#ffffff'>             <div>              <a target='_blank' href='https://www.@MARKER_SITE/order/?l=[[autohash]]&utm_source=manual&utm_medium=email&utm_campaign=@MARKER_UTM_CAMPAIGN'>                <img  src='@MARKER_BANNER_IMAGE' alt='@MARKER_ALT_TEXT' style='outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; display: block; margin: 0 auto; max-width: 100%'/>              </a>            </div>          </td>        </tr>                <!-- TEXT $ BUTTON -->        <tr bgcolor='#fff'>          <td colspan='4'>                        <p style='margin: 1em 0; font-size: 16px; line-height: 1.5em; color: #3b3b3b; font-family: \"Open Sans\", sans-serif;'>              Hello [[name]]!            </p>                        <p style='font-size: 16px; line-height: 1.5em; color: #3b3b3b; font-family: \"Open Sans\", sans-serif;text-align: justify;'>                      @MARKER_TEXT_PREBTN                  </p>                        <p style='font-size: 16px; line-height: 1.5em; color: #3b3b3b; font-family: \"Open Sans\", sans-serif;text-align:center;'>              Get 16% OFF any order over 5 pages            </p>                        <div style='text-align: center; margin: 30px 0;'>              <center>                <b>                  <a target='_blank' href='https://www.@MARKER_SITE/order/?numpages=5&promo=@MARKER_PROMO_CODE&l=[[autohash]]&utm_source=manual&utm_medium=email&utm_campaign=@MARKER_UTM_CAMPAIGN@MARKER_LINK_ANCHOR' style='font-weight:600; font-size: 18px; text-decoration: none; color: #fff;   background: #ec353a; display: inline-block; margin: 0px 0; padding:10px 40px; text-transform:uppercase; border-bottom:3px solid #EC3A1E; border-radius:5px; font-family:Tahoma, Arial, sans-serif' target='_self'>                    ORDER NOW                  </a>                </b>              </center>             </div>                        <p style='margin: 1em 0; font-size: 16px; line-height: 1.5em; color: #3b3b3b; font-family: \"Open Sans\", sans-serif;text-align: justify;'>                   @MARKER_TEXT_POSTBTN                           </p>                        <p style='color: #3b3b3b; font-family: \"Open Sans\",sans-serif; font-size:16px; text-align:left;'>               <b>Best Regards,<br>Alice Fisher</b>            </p>          </td>        </tr>                <!-- FOOTER -->        <tr align='center' bgcolor='@MARKER_LOGO_COLOR'>          <td colspan='2' align='left'>            <p style='font-family: \"Open Sans\",sans-serif; font-weight: 600; font-size: 14px; color: #fff; text-align: left;'>We accept:</p>            <img createnew='true'  src='https://multimedia.getresponse.com/getresponse-10719303/photos/381942603.png' alt='Payment Methods' style='max-width: 100%; height: auto;'/>          </td>          <td align='left' colspan='2'>            <p style='font-family: \"Open Sans\",sans-serif; font-weight: 598; font-size: 14px; color: #fff; text-align: left;'>All payments are processed by:</p>            <img createnew='true'  src='https://multimedia.getresponse.com/getresponse-10719303/photos/381942703.png' alt='Secure Payment' style='max-width: 100%; height: auto;'/>          </td>        </tr>                <!-- AFTERFOOTER -->        <tr bgcolor='@MARKER_LOGO_COLOR'>          <td colspan='4'>            <p style='font-size: 12px; color: #ddd; font-family: \"Open Sans\",sans-serif; text-align: center;'>              You are receiving this email because you are a registered user of @MARKER_SITE.            </p>          </td>        </tr>              </tbody>    </table>        <!--[if (gte mso 9)|(IE)]>      </td>      </tr>      </table>    <![endif]-->      </body></html>";
         const MARKERS = [
           //PASTE DATA
-          '@MARKER_PREHEADER',
-          '@MARKER_ALT_TEXT',
-          '@MARKER_BANNER_IMAGE',
-          '@MARKER_PROMO_CODE',
-          '@MARKER_UTM_CAMPAIGN',
-          '@MARKER_TEXT_PREBTN',
-          '@MARKER_TEXT_POSTBTN',
-          //AUTO DATA FROM SITELIST
-          '@MARKER_SITE',
-          '@MARKER_LOGO_IMAGE',
-          '@MARKER_LOGO_COLOR',
-          '@MARKER_LINK_ANCHOR'
+          '@MARKER_PREHEADER',           // 0
+          '@MARKER_ALT_TEXT',            // 1
+          '@MARKER_BANNER_IMAGE',        // 2
+          '@MARKER_PROMO_CODE',          // 3
+          '@MARKER_UTM_CAMPAIGN',        // 4
+          '@MARKER_TEXT_PREBTN',         // 5
+          '@MARKER_TEXT_POSTBTN',        // 6
+          //AUTO DATA FROM SITELIST      // 
+          '@MARKER_SITE',                // 7
+          '@MARKER_LOGO_IMAGE',          // 8
+          '@MARKER_LOGO_COLOR',          // 9
+          '@MARKER_LINK_ANCHOR',         // 10
+          '@MARKER_PHONE',               // 11
+          //CALCULATED DATA              // 
+          '@MARKER_AUTO_FOOTER_COLOR',   // 12
+          '@MARKER_AUTO_BUTTON_COLOR',   // 13
+          '@MARKER_AUTO_TEXT_COLOR'      // 14
         ];
         var CURRENT = -1;
         var SWITCH = true;
@@ -92,7 +97,8 @@
               'siteName': temp[0],
               'logoLink': temp[1],
               'logoColor': temp[2],
-              'linkAddition': temp[3]
+              'linkAddition': temp[3],
+              'telephone': temp[4]
             };
           }
           return result;
@@ -151,17 +157,41 @@
 
         function getHtml(){
           var result = TEMPLATE;
+          
+          function shadeColor(color, percent) {
+            var R = parseInt(color.substring(1,3),16);
+            var G = parseInt(color.substring(3,5),16);
+            var B = parseInt(color.substring(5,7),16);
+            R = parseInt(R * (100 + percent) / 100);
+            G = parseInt(G * (100 + percent) / 100);
+            B = parseInt(B * (100 + percent) / 100);
+            R = (R<255)?R:255;  
+            G = (G<255)?G:255;  
+            B = (B<255)?B:255;  
+            var RR = ((R.toString(16).length==1)?"0"+R.toString(16):R.toString(16));
+            var GG = ((G.toString(16).length==1)?"0"+G.toString(16):G.toString(16));
+            var BB = ((B.toString(16).length==1)?"0"+B.toString(16):B.toString(16));
+            return "#"+RR+GG+BB;
+          }
+          
           result = result.split(MARKERS[0]).join(DATA.preheader);
           result = result.split(MARKERS[1]).join(DATA.alt_text);
           result = result.split(MARKERS[2]).join(DATA.banner);
           result = result.split(MARKERS[3]).join(DATA.promo);
           result = result.split(MARKERS[4]).join(DATA.campaign);
           result = result.split(MARKERS[5]).join(DATA.text_prebtn);
-          result = result.split(MARKERS[6]).join(DATA.text_postbtn);
+          result = result.split(MARKERS[6]).join(DATA.text_postbtn)
+          ;
           result = result.split(MARKERS[7]).join(LIST[CURRENT].siteName);
           result = result.split(MARKERS[8]).join(LIST[CURRENT].logoLink);
           result = result.split(MARKERS[9]).join(LIST[CURRENT].logoColor);
           result = result.split(MARKERS[10]).join(LIST[CURRENT].linkAddition);
+          result = result.split(MARKERS[11]).join(LIST[CURRENT].telephone);
+          
+          result = result.split(MARKERS[12]).join(shadeColor(LIST[CURRENT].logoColor, -20));
+          result = result.split(MARKERS[13]).join('#b32400');
+          result = result.split(MARKERS[14]).join('#bfbfbf');
+          
           return result;
         }
       
