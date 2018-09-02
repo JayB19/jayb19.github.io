@@ -1,0 +1,225 @@
+<title>Parina Engine</title>
+<meta charset='utf-8'>
+<canvas id='canvas'></canvas>
+<script src='libs/core.js'></script>
+<script>
+"use strict"
+var Player, Walls, Screen, Camera, Colors;
+
+function init(){
+  Player = new Core.Origin(40,80,0);
+  Walls = [
+    obj(80,80),
+    obj(20,70),
+    //obj(70,10),
+    //obj(70,40),
+    //obj(70,70),
+    //obj(40,70),
+  ];
+  Screen = new Core.Screen(300,200);
+  Camera = new Core.Camera(Player,Screen);
+  Colors = ['#aa4400', '#668866', '#ffffff'];
+
+  _updateSize();
+  _loop.start();
+  //debuh
+  //karbik zaebis
+  
+}
+
+function render(){
+  var g = CANVAS.getContext('2d');
+
+  var p = Player;
+  var w = Walls;
+
+  clear();
+
+  renderWalls();
+  renderMap();
+  renderGrid(0,0,32,32,10);
+  renderVisible(10);
+  function renderWalls(){
+    g.fillStyle = Colors[2];
+    for(var i=0; i<w.length; i++){
+      g.fillRect(Camera.getX(w[i].x, w[i].y),100, 2, 20);
+      g.fillText(i, Camera.getX(w[i].x, w[i].y), 100);
+    }
+  }
+  function renderMap(){
+    g.fillStyle = Colors[1];
+    for(var i=0; i<w.length; i++){
+      g.fillRect(w[i].x-4, w[i].y-4, 8, 8);
+      g.fillText(i, w[i].x+4, w[i].y);
+    }
+    g.fillStyle = Colors[0];
+    g.fillRect(p.x-2, p.y-2, 4,4);
+    g.fillRect(p.x-1 + Core.cosp(p.a, 16), p.y-1 + Core.sinp(p.a, 16), 2,2);
+    g.fillRect(p.x-1 + Core.cosp(p.a, 32), p.y-1 + Core.sinp(p.a, 32), 2,2);
+
+    var si = 40;
+    var x = p.x-si + Math.cos(p.a)*40;
+    var y = p.y-si + Math.sin(p.a)*40;
+    g.strokeStyle = Colors[2]; g.strokeRect(x,y,si*2,si*2);
+    g.strokeStyle = Colors[2];
+
+    //d(x,y,si*2);
+
+    function d(x,y,size){
+      x = (Math.round(x/10))*10;
+      y = (Math.round(y/10))*10;
+      debug(x+" : "+y,0,40);
+      g.strokeStyle = '#dddd00';
+      g.strokeRect(x,y,size,size);
+    }
+  }
+  function renderVisible(size){
+    
+    drawFOVlines();
+  
+    var x = p.x, y = p.y, a = p.a;
+    var angL = a-Core.a45, angR = a+Core.a45;
+    var c = ['#ff0000','#00ff00','#0000ff'];
+    var stepx, stepy;
+    /*
+    var steps = 6;
+    for(var i=3; i<steps; i++){
+      stepx = Core.cosp(angL,i);
+      stepy = Core.sinp(angL,i);
+      
+      stepx = Math.round(stepx)*size;
+      stepy = Math.round(stepy)*size;
+      
+      console.log("i:"+i+"  ",stepx,stepy);
+      
+      g.fillStyle = c[i-3];
+      drawPoint(stepx,stepy);
+    }
+    */
+    //stepx = Math.cos(a-Core.a45);
+    //stepy = Math.sin(a-Core.a45);
+    //stepx = Math.round(stepx);
+    //stepy = Math.round(stepy);
+    stepx = 0;
+    stepy = 0;
+    /*
+    for(var i=0; i<6; i++){
+      stepx += Math.cos(a-Core.a45);
+      stepy += Math.sin(a-Core.a45);
+      drawPoint(Math.round(stepx)*10,Math.round(stepy)*10);
+      console.log(":"+i, stepx,stepy);
+    }
+    */
+    
+    debug("V: "+stepx,0,40,'#888800');
+    debug("t: "+Math.cos(a-Core.a45),10,30);
+    var sx = Math.round(Math.cos(a-Core.a45)*6);
+    var sy = Math.round(Math.sin(a-Core.a45)*6);
+    debug("t8:"+sx+"   :   "+sy,10,20);
+    drawPoint(sx*10,sy*10);
+    
+    function drawPoint(xx,yy){
+      g.fillStyle = '#ffff00';
+      g.fillRect(x+xx,y+yy,1,1);
+    }
+    function drawFOVlines(){
+      g.strokeStyle = '#444400';
+      g.beginPath();
+      line(p.x,p.y,p.x+Core.cosp(p.a-Core.a45,64),p.y+Core.sinp(p.a-Core.a45,64));
+      line(p.x,p.y,p.x+Core.cosp(p.a+Core.a45,64),p.y+Core.sinp(p.a+Core.a45,64));
+      line(p.x+Core.cosp(p.a-Core.a45,64),p.y+Core.sinp(p.a-Core.a45,64),
+           p.x+Core.cosp(p.a+Core.a45,64),p.y+Core.sinp(p.a+Core.a45,64));
+      g.closePath();
+      g.stroke();
+    }
+  }
+  function line(x,y,h,v){g.moveTo(x,y); g.lineTo(h,v)};
+  function renderGrid(x,y,h,v,cs){
+    var i, xm = y+h*cs, ym = x+v*cs;
+    g.strokeStyle = '#222222';
+    g.beginPath();
+    for(i=0;i<v;i++)line(x+i*cs,y, x+i*cs,xm);
+    for(i=0;i<h;i++)line(x,y+i*cs, ym,y+i*cs);
+    g.stroke();
+    g.closePath();
+  }
+  function clear(){
+    g.fillStyle = '#000000';
+    g.fillRect(0,0,CANVAS.width, CANVAS.height);
+    g.fillStyle = '#222222';
+    g.fillRect(CANVAS.width/2,0,1, CANVAS.height);
+  }
+  function debug(message,x=0,y=20,color='#ffffff'){
+    g.strokeStyle = color;
+    g.strokeText(message,x,CANVAS.height-y);
+  }
+}
+
+function obj(x,y){return {x:x,y:y}};
+
+
+//Environment
+var cc = 2500;
+function _loop(){
+  //render here
+  cc--; if(cc<0) return;
+  render();
+  if(_loop.running){setTimeout(_loop, 100)}
+}
+_loop.start = function(){
+  _loop.running = true;
+  _loop();
+}
+_loop.stop = function(){
+  _loop.running = false;
+}
+
+function _updateSize(){
+  CANVAS.width = Screen.width;//window.innerWidth;
+  CANVAS.height = Screen.height;//window.innerHeight;
+}
+
+function _out(message, type=0){
+  console[['log', 'error', 'info', 'warn'][type]](message);
+}
+
+const CANVAS = document.getElementById('canvas');
+window.onload = init;
+
+window.onkeypress = function(e){
+  var intensity = Math.PI/72;
+  var step = 1;
+  if(e.keyCode == 119){Player.x+=Core.cosp(Player.a,step); Player.y+=Core.sinp(Player.a,step)}
+  if(e.keyCode == 115){Player.x-=Core.cosp(Player.a,step); Player.y-=Core.sinp(Player.a,step)}
+  if(e.keyCode == 97){Player.a = changeAngle(Player.a,-intensity)}
+  if(e.keyCode == 100){Player.a = changeAngle(Player.a,intensity)}
+  if(e.keyCode == 101){Player.y--}
+  if(e.keyCode == 113){Player.y++}
+  function changeAngle(a,i){
+    a+=i;
+    if(a<-Math.PI) a+=Math.PI*2;
+    if(a>Math.PI) a-=Math.PI*2;
+    return a;
+  }
+}
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
