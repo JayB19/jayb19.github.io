@@ -28,8 +28,23 @@
     <li><a href='vector_test'>Polygon graphics engine (N\A)</a></li>
     <li><a href='console_test'>Console engine for TRPG (N\A)</a></li>
   </ul>
-  
+  <canvas id='cnvs' width='300' height='150'></canvas>
   <script>
+    var c = document.getElementById('cnvs').getContext('2d');
+    var i = 0;
+    function draw(){
+      if(i>60) i=0;
+      c.fillStyle = '#224';
+      c.fillRect(0,0, 300, 150);
+      c.fillStyle = '#bb8';
+      c.fillRect(i*5, 100, 20, 10);
+      i++;
+      return setTimeout(draw, 20);
+    }
+    
+    var loop = draw();
+    
+    
   </script>
 
 </body>
