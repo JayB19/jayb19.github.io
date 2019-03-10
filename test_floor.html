@@ -85,8 +85,8 @@ function render(){
     for(var x=0; x<WIDTH; x++){
       var xd = (x - WIDTH/2) / HEIGHT;
       xd *= z;
-      var xx = Math.round((xd + time*0.01) & 7);
-      var zz = Math.round((z + time*0.01) & 7);
+      var xx = Math.round((xd + time*0.1) & 7);
+      var zz = Math.round((z + time*-0.02) & 7);
       viewport.pixels[x + y * WIDTH] = (xx*16) | (zz*16) << 8;
       
     }
@@ -113,7 +113,7 @@ function init(){
   canvas.height = HEIGHT;
   g = canvas.getContext('2d');
   viewport = new Bitmap(WIDTH, HEIGHT);
-  setInterval(tick, 1);
+  setInterval(tick, 25);
 }
 
 
