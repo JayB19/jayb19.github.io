@@ -106,6 +106,7 @@ function tick(){
   var fps = 1000 / bench;
   if(fps > maxfps) maxfps = fps;
   info.textContent = maxfps + '\n' + fps;
+  requestAnimationFrame(tick);
 }
 
 function init(){
@@ -113,7 +114,7 @@ function init(){
   canvas.height = HEIGHT;
   g = canvas.getContext('2d');
   viewport = new Bitmap(WIDTH, HEIGHT);
-  setInterval(tick, 25);
+  tick();
 }
 
 
