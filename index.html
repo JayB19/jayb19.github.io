@@ -1,144 +1,51 @@
 <head>
-  <title>Test Floor</title>
+  <title>JayB19</title>
+  <meta charset='UTF-8'/>
   <style>
-    #info{
-      background-color: #111;
-      color: #fdd;
-      resize: none;
-      border: none;
+    body {
+      background-color: #224;
+      color: #bb8;
+      font: 16px Consolas;
     }
-    #canvas{
-      width: 320px;
-      height: 240px;
-      //image-rendering: -moz-crisp-edges;
-      //image-rendering: -webkit-crisp-edges;
-      //image-rendering: pixelated;
-      //image-rendering: crisp-edges;
+    a:link, a:visited {
+      color: #ddd;
+      text-decoration: none;
     }
-    body{
-      background-color: #111;
-    }
-    *{
-      //border: 1px solid white;
+    a:hover, a:active {
+      color: #fff;
     }
   </style>
-  <script>
-////////////////////////////////////////////////////////////////////////////////
-'use strict'
-/*
-RENDERING LIKE NOTCH!
-App has only ONE image - BufferedImage of EscapeComponent
-and gets pixels of BufferedImage. If need to render - render this BI;
-*/
-function Bitmap(width, height){
-  this.img = new ImageData(width, height);
-  this.pixels = new Uint32Array(width * height);
-}
-Bitmap.prototype = {
-  get: function(){
-    var index;
-    for(var i=0; i<this.pixels.length; i++){
-      index = i * 4;
-      this.img.data[index +0] = (this.pixels[i] >> 16)&0xff;
-      this.img.data[index +1] = (this.pixels[i] >> 8)&0xff;
-      this.img.data[index +2] = (this.pixels[i])&0xff;
-      this.img.data[index +3] = 255;
-    }
-    return this.img;
-  },
-  set: function(){
-    var index;
-    for(var i=0; i<this.pixels.length; i++){
-        index = i * 4;
-        this.pixels[i] = 
-            this.img.data[index +0] << 16 |
-            this.img.data[index +1] << 8 |
-            this.img.data[index +2];
-    }
-  },
-}
-////////////////////////////////////////////////////////////////////////////////
-  </script>
 </head>
+
+
 <body>
-  <textarea id='info' cols=180 rows=4></textarea>
-  <canvas id='canvas'></canvas>
-  
+  <div class='header'>
+    <h2><p style='color: pink'>JAYB19</p></h2>  
+  </div>
+  <p>Index page for tests:</p>
+  <ul>
+    <li><a href='parina_test'>Raycasting dev</a></li>
+    <li><a href='test_floor'>Benchmark for 2.5D</a></li>
+    <li><a href='vector_test'>Polygon graphics engine (N\A)</a></li>
+    <li><a href='console_test'>Console engine for TRPG (N\A)</a></li>
+  </ul>
+  <canvas id='cnvs' width='300' height='150'></canvas>
   <script>
-////////////////////////////////////////////////////////////////////////////////
-const WIDTH = 8;
-const HEIGHT = 6;
-
-var time = 0;
-var viewport;
-var info = document.getElementById('info');
-var g, canvas = document.getElementById('canvas');
-
-function render(){
-  for(var y=0; y<HEIGHT; y++){
-    var yd = ((y+0.5) - HEIGHT/2) / HEIGHT;
-    if(yd < 0){
-        yd = -yd;
+    var c = document.getElementById('cnvs').getContext('2d');
+    var i = 0;
+    function draw(){
+      if(i>60) i=0;
+      c.fillStyle = '#224';
+      c.fillRect(0,0, 300, 150);
+      c.fillStyle = '#bb8';
+      c.fillRect(i*5, 100, 20, 10);
+      i++;
+      return setTimeout(draw, 20);
     }
-    var z = 3 / yd;
-    for(var x=0; x<WIDTH; x++){
-      var xd = (x - WIDTH/2) / HEIGHT;
-      xd *= z;
-      var xx = Math.round((xd + time*0.1) & 7);
-      var zz = Math.round((z + time*-0.02) & 7);
-      viewport.pixels[x + y * WIDTH] = (xx*16) | (zz*16) << 8;
-      
-    }
-  }
-  g.putImageData(viewport.get(), 0, 0);
-}
-
-var bench;
-var maxfps = 0;
-function tick(){
-  time++;
-  bench = performance.now();
-  //bench = new Date().getTime();
-  render();
-  bench = performance.now() - bench;
-  //bench = new Date().getTime() - bench;
-  var fps = 1000 / bench;
-  if(fps > maxfps) maxfps = fps;
-  info.textContent = maxfps + '\n' + fps;
-  requestAnimationFrame(tick);
-}
-
-function init(){
-  canvas.width = WIDTH;
-  canvas.height = HEIGHT;
-  g = canvas.getContext('2d');
-  viewport = new Bitmap(WIDTH, HEIGHT);
-  tick();
-}
-
-
-
-window.onload = init;
-////////////////////////////////////////////////////////////////////////////////
+    
+    var loop = draw();
+    
+    
   </script>
+
 </body>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
