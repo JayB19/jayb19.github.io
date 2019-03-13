@@ -8,11 +8,11 @@
       border: none;
     }
     #canvas{
-      width: 320px;
-      height: 240px;
+      width: 640px;
+      height: 320px;
       //image-rendering: -moz-crisp-edges;
       //image-rendering: -webkit-crisp-edges;
-      //image-rendering: pixelated;
+      image-rendering: pixelated;
       //image-rendering: crisp-edges;
     }
     body{
@@ -66,8 +66,8 @@ Bitmap.prototype = {
   
   <script>
 ////////////////////////////////////////////////////////////////////////////////
-const WIDTH = 8;
-const HEIGHT = 6;
+const WIDTH = 160;
+const HEIGHT = 80;
 
 var time = 0;
 var viewport;
