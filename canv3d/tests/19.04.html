@@ -1,0 +1,314 @@
+<canvas id='view'></canvas>
+<canvas id='view3d'></canvas>
+<div id='info'></div>
+
+<style>
+    *{
+        margin: 0px;
+        background-color: #000;
+    }
+    #info{
+        width: 25%;
+        height: 75%;
+        background-color: #222;
+        color: #ddd;
+        float: left;
+    }
+    #view{
+        width: 75%;
+        height: 100%;
+        background-color: #111;
+        color: #ddd;
+        float: left;
+    }
+    #view3d{
+        width: 25%;
+        height: 25%;
+        background-color: #000;
+        color: #ddd;
+        float: left;
+        image-rendering: pixelated;
+    }
+</style>
+
+<script>
+'use strict'
+const W = 720;
+const H = 480;
+const SCALE = 32;
+
+const viewW = 160;
+const viewH = 80;
+
+var g, g3d, info, log;
+var p, ws, ad, qe;
+
+var TST1 = 0;
+var TST2 = 0;
+var TST3 = 0;
+var TST4 = 0;
+
+function init(){
+    info = document.getElementById('info');
+    g = document.getElementById('view').getContext('2d');
+    g.canvas.width = W;
+    g.canvas.height = H;
+    
+    g3d = document.getElementById('view3d').getContext('2d');
+    g3d.canvas.width = viewW;
+    g3d.canvas.height = viewH;
+    
+    ws = 0;
+    ad = 0;
+    qe = 0;
+    
+    p = {
+        x: 2.5,
+        y: 6.5,
+        a: 0 * Math.PI / 180,
+    };
+    
+    tick();
+}
+
+function tick(){
+    log = '';
+    const BR = '<br>';
+    var fov = (90+TST1) * Math.PI / 180;
+    var zclip = 0.2 + (TST2*0.01);
+    var koef = viewW / (zclip * Math.tan(fov/2) * 2);
+    var zBuff = [];
+    for(var i=0; i<viewW; i++){
+        zBuff[i] = 0;
+    }
+    log += 'FOV: '+(fov / Math.PI * 180).toFixed(2)+' zclip:'+zclip+BR;
+    var cos = Math.cos(p.a);
+    var sin = Math.sin(p.a);
+    p.a += Math.PI * ad * 0.01;
+    p.x += (cos * ws + Math.cos(p.a+0.5*Math.PI) * qe) * 0.05;
+    p.y += (sin * ws + Math.sin(p.a+0.5*Math.PI) * qe) * 0.05;
+    
+    g.clearRect(0, 0, W, H);
+    g3d.clearRect(0, 0, viewW, viewH);
+    
+    grid('#000', 0.5);
+    
+    dot(p.x, p.y, '#fff', 8);
+    line(p.x, p.y, p.x + cos*8, p.y + sin*8, '#fff', 0.2);
+    line(p.x, p.y, p.x+Math.cos(p.a - Math.PI*0.5)*8, p.y+Math.sin(p.a - Math.PI*0.5)*8, '#f00', 0.5);
+    line(p.x, p.y, p.x+Math.cos(p.a + Math.PI*0.5)*8, p.y+Math.sin(p.a + Math.PI*0.5)*8, '#f00', 0.5);
+    for(var i=0; i<=16; i++){
+        var ang = Math.PI * (0.5/16*i -0.25) + p.a;  
+        line(p.x, p.y, p.x+Math.cos(ang)*8, p.y+Math.sin(ang)*8, '#fff', 0.1);
+    }
+    
+    wall(4,4, 4,6, '#f88');
+    wall(4,6, 6,6, '#8f8');
+    wall(6,6, 6,8, '#88f');
+    wall(6,8, 4,10, '#ff8');
+    wall(2,4, 4,4, '#8ff');
+    wall(4,10, 2,10, '#f8f');
+    
+    wall(2,10, 2,12, '#f88');
+    wall(2,12, 0,10, '#8f8');
+    wall(0,10, 0,8, '#88f');
+    wall(0,8, 2,6, '#ff8');
+    wall(2,6, 0,4, '#8ff');
+    wall(0,4, 2,4, '#f8f');
+    
+    
+    //TOOLS
+    function wall(x0, y0, x1, y1, col){
+        //var xp = WW/2 + (NP * (dx / dz)) * (WW / (NP * fovt * 2));
+        //var xp = WW/2 + (NP * (dx / dz)) * koef;
+        
+        line(x0, y0, x1, y1, col, 2);
+    
+        x0 -= p.x; y0 -= p.y;
+        x1 -= p.x; y1 -= p.y;
+        
+        var ax = y0*cos - x0*sin;
+        var az = x0*cos + y0*sin;
+        var bx = y1*cos - x1*sin;
+        var bz = x1*cos + y1*sin;
+        
+        if (az < zclip && bz < zclip) return;
+        
+        if(az < zclip){
+            var k = (zclip - az) / (bz - az);
+            az = zclip;
+            ax = ax + (bx - ax) * k;
+        }
+        if(bz < zclip){
+            var k = (zclip - az) / (bz - az);
+            bz = zclip;
+            bx = ax + (bx - ax) * k;
+        }
+        
+        var _X = 12;
+        var _Y = 8;
+        dot(_X, _Y, '#fff', 4);
+        line(_X +az, _Y +ax, _X +bz, _Y +bx, col, 2);
+        
+        var sx = viewW/2 + Math.round(zclip * ax/az * koef);
+        var ex = viewW/2 + Math.round(zclip * bx/bz * koef);
+        var iza = 1 / az;
+        var izb = 1 / bz;
+        var izd = izb - iza;
+        var iw = 1 / (ex - sx);
+        
+        log += 'iw: '+iw+BR;
+        
+        //if(sx < 0) sx = 0;
+        //if(ex > viewW) ex = viewW;
+        g3d.fillStyle = col;
+        for(var i=sx; i<ex; i++){
+            var iz = iza + izd * ((i - sx) * iw);
+            //log += (1/iz*4).toFixed(2) + ' ';
+            if(zBuff[i] > iz) continue;
+            zBuff[i] = iz;
+            var hh = iz*viewH/2;
+            g3d.fillRect(i, viewH/2-hh, 1, hh*2);
+        }
+        log += BR;
+        
+        
+        
+        log += sx + ' : ' + ex + ' [' + col + ']' + BR;
+    }
+    
+    function dot(x, y, col, size){
+        col = col || '#888';
+        size = size || SCALE/4;
+        x = x*SCALE - size/2;
+        y = y*SCALE - size/2;
+        g.fillStyle = col;
+        g.fillRect(x, y, size, size);
+    }
+    
+    function line(x0, y0, x1, y1, col, size){
+        col = col || '#888';
+        size = size || SCALE/8;
+        x0 *= SCALE; y0 *= SCALE;
+        x1 *= SCALE; y1 *= SCALE;
+        
+        g.strokeStyle = col;
+        g.lineWidth = size;
+        g.beginPath();
+        g.moveTo(x0, y0);
+        g.lineTo(x1, y1);
+        g.stroke();
+    }
+    
+    function grid(col, size){
+        col = col || '#888';
+        size = size || SCALE/8;
+        var area = (W>H ? W:H);
+        g.strokeStyle = col;
+        g.lineWidth = size;
+        for(var i=0; i<area; i+=SCALE){
+            g.strokeRect(i, 0, 1, area);
+            g.strokeRect(0, i, area, 1);
+        }
+    }
+    info.innerHTML = log;
+    requestAnimationFrame(tick);
+}
+
+window.onload = init;
+
+window.onkeydown = function(e){
+    switch(e.keyCode){
+        case 87: ws = +1; break;
+        case 83: ws = -1; break;
+        case 68: ad = +1; break;
+        case 65: ad = -1; break;
+        case 69: qe = +1; break;
+        case 81: qe = -1; break;
+    }
+    if(e.key == 'z') TST1--;
+    if(e.key == 'x') TST1++;
+    if(e.key == 'c') TST2--;
+    if(e.key == 'v') TST2++;
+    if(e.key == 'r') TST3--;
+    if(e.key == 't') TST3++;
+    if(e.key == 'f') TST4--;
+    if(e.key == 'g') TST4++;
+}
+
+window.onkeyup = function(e){
+    switch(e.keyCode){
+        case 87:
+        case 83: ws = 0; break;
+        case 68:
+        case 65: ad = 0; break;
+        case 69:
+        case 81: qe = 0; break;
+    }
+}
+
+/*
+
+    
+    //tests
+    
+    xCam = game.player.x - Math.sin(rot) * 0.3;
+    yCam = game.player.z - Math.cos(rot) * 0.3;
+    double xc = (x - xCam) * 2 - rSin * 0.2;
+    
+    var XX = 4;
+    var YY = 8;
+    var xcam = p.x - sin * 0.3;
+    var ycam = p.y - cos * 0.3;
+    var xc = (p.x - xcam) * 2 - sin * 0.2;
+    var yc = (p.y - ycam) * 2 - cos * 0.2;
+    dot(XX +cos*2, YY +sin*2, '#f00', 2);
+    dot(XX-2.5 +xcam, YY-4.5 +ycam, '#0f0', 2);
+    dot(XX +xc, YY +yc, '#00f', 2);
+    dot(XX, YY, '#fff', 1);
+    
+    var XX = 2;
+    var YY = 10;
+    var NP = 1 + (TST2*0.1);
+    var WW = 4 * SCALE;
+    var HH = WW / 2;
+    
+    var dx = 0+TST3;
+    var dz = 2+TST4;
+    var dxz = dx/dz;
+    var d_x = NP * dxz;
+    var d_x2 = WW/2 * d_x * fov/2;
+    var viewDist = (WW/2) / fovt;
+    var xp0 = (WW/2) - (dx / dz * fovt);
+    
+    var nearplane = NP*SCALE; //too screen scaling
+    //SCREEN PLANE WIDTH
+    var planeW = nearplane * Math.tan(fov/2) * 2;
+    var kk = WW / planeW;
+    dot(XX+NP, YY-(planeW/2/SCALE), '#ff0', 2);
+    dot(XX+NP, YY+(planeW/2/SCALE), '#ff0', 2);
+    
+    log += 'planeW: '+planeW +' : '+ fovt +BR;
+    
+    dot(XX, YY, '#fff', 2);
+    dot(XX +dz, YY +dx, '#fff', 4);
+    line(XX, YY, XX+Math.cos(-fov/2)*4, YY+Math.sin(-fov/2)*4, '#888', 0.5);
+    line(XX, YY, XX+Math.cos(+fov/2)*4, YY+Math.sin(+fov/2)*4, '#888', 0.5);
+    line(XX+NP, YY-4, XX+NP, YY+4, '#888', 0.25);
+    line(XX, YY, XX+dz, YY+dx, '#888', 0.25);
+    
+    dot(XX+NP, YY+d_x, '#f00', 2);
+    
+    g.fillStyle = '#000';
+    g.fillRect(1 *SCALE, 12 *SCALE, WW, 16);
+    g.fillStyle = '#fff';
+    var xp = WW/2 + (NP * (dx / dz)) * (WW / (NP * fovt * 2));
+    log += 'WW:'+WW + BR;
+    log += 'NP:'+NP + BR;
+    log += 'fovt:'+fovt + BR;
+    log += 'dx:'+dx + BR;
+    log += 'dz:'+dz + BR;
+    g.fillRect(1 *SCALE + xp, 12 *SCALE, 1, 16);
+
+*/
+</script>

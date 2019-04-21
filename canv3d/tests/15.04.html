@@ -1,0 +1,129 @@
+<canvas id='canvas'></canvas>
+<style>
+    *{
+        margin: 0px;
+        background-color: #000;
+        color: #daa;
+        font: 12px monospace;
+    }
+    #canvas{
+        height: 100%;
+        background-color: #222;
+    }
+</style>
+    
+<script>
+
+const W = 600;
+const H = 600;
+const SCALE = 32;
+
+var g;
+var map = [
+    'xxxxxxxxxxxxxxxx',
+    'x     x        x',
+    'x     x x xxx  x',
+    'x  x  x x x x  x',
+    'x  x  xxxxxxx  x',
+    'x              x',
+    'x              x',
+    'x  xxxxxxxxxx  x',
+    'x  xxxxxxxxxx  x',
+    'x              x',
+    'x              x',
+    'xxxx xx  xx xxxx',
+    'x  x xx  xx x  x',
+    'x  x xx  xx xxxx',
+    'x              x',
+    'xxxxxxxxxxxxxxxx',
+];
+
+window.onload = init;
+
+function init(){
+    g = document.getElementById('canvas').getContext('2d');
+    g.canvas.width = W;
+    g.canvas.height = H;
+    
+    draw();
+}
+
+function draw(){
+    g.clearRect(0, 0, W, H);
+    
+    drawGrid();
+    drawMap();
+    drawWalls();
+    
+    function drawGrid(){
+        var width = W>H? W : H;
+
+        g.fillStyle = '#444';
+        for(i=0; i<width; i+=SCALE){
+            g.fillRect(i, 0, 0.5, H);
+            g.fillRect(0, i, W, 0.5);
+        }
+    }
+    
+    function drawMap(){
+        var d = SCALE/16;
+        g.fillStyle = '#422';
+        for(y=0; y<map.length; y++){
+            for(x=0; x<map[y].length; x++){
+                if(map[y][x] == 'x') g.fillRect(x*SCALE+d/2, y*SCALE+d/2, SCALE-d, SCALE-d);
+            }
+        }
+    }
+    
+    function drawWalls(){
+        var c = 0;
+        for(y=0; y<map.length; y++){
+            for(x=0; x<map[y].length; x++){
+                detect(x, y);
+            }
+        }
+        
+        function detect(x, y){
+            if(map[y][x] == 'x') return;
+            
+            var n = map[y-1][x+0] == 'x';
+            var s = map[y+1][x+0] == 'x';
+            var w = map[y+0][x-1] == 'x';
+            var e = map[y+0][x+1] == 'x';
+            
+            x *= SCALE;
+            y *= SCALE;
+            var d = SCALE/8;
+            
+            c++;
+            g.fillStyle = '#000';
+            g.fillText(c, x+d, y+d*4);
+            
+            if(n){
+                g.fillStyle = '#888';
+                g.fillRect(x+d/2 +0, y+d/2 +0, SCALE-d, d/2);
+                g.fillStyle = '#fff';
+                g.fillText(c, x+d*4, y+d/2);
+            }
+            if(s){
+                g.fillStyle = '#888';
+                g.fillRect(x+d/2 +0, y-d/2 +SCALE, SCALE-d, d/2);
+                g.fillStyle = '#fff';
+                g.fillText(c, x+d*4, y-d/2 +SCALE);
+            }
+            if(w){
+                g.fillStyle = '#888';
+                g.fillRect(x+d/2 +0, y+d/2 +0, d/2, SCALE-d);
+                g.fillStyle = '#fff';
+                g.fillText(c, x-d*2, y+d*4);
+            }
+            if(e){
+                g.fillStyle = '#888';
+                g.fillRect(x-d/2 +SCALE, y+d/2 +0, d/2, SCALE-d);
+                g.fillStyle = '#fff';
+                g.fillText(c, x-d*2 +SCALE, y+d*4);
+            }
+        }
+    }
+}
+</script>

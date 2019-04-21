@@ -1,0 +1,387 @@
+<div id='info'></div>
+<canvas id='view'></canvas>
+<canvas id='map'></canvas>
+
+<style>
+    *{
+        margin: 0px;
+        font: 12px monospace;
+    }
+    #info{
+        width: 50%;
+        height: 25%;
+        background-color: #222;
+        color: #ddd;
+        float: left;
+    }
+    #view{
+        width: 50%;
+        height: 25%;
+        background-color: #000;
+        color: #ddd;
+        float: left;
+        image-rendering: pixelated;
+    }
+    #map{
+        width: 100%;
+        height: 75%;
+        background-color: #222;
+        color: #ddd;
+        float: left;
+        image-rendering: pixelated;
+    }
+</style>
+
+<script>
+const vW = 160;
+const vH = 80;
+const mW = 1200;
+const mH = 450;
+const SCALE = 32;
+const BR = '<br>';
+
+var info, vg, mg;
+var running, log;
+var p, ws, ad, qe;
+
+function init(){
+    info = document.getElementById('info');
+    vg = document.getElementById('view').getContext('2d');
+    mg = document.getElementById('map').getContext('2d');
+    
+    vg.canvas.width = vW;
+    vg.canvas.height = vH;
+    mg.canvas.width = mW;
+    mg.canvas.height = mH;
+    
+    ws = 0;
+    ad = 0;
+    qe = 0;
+    
+    p = {
+        x: 2.5,
+        y: 2.5,
+        a: 0 * Math.PI / 180,
+    };
+
+    start();
+}
+
+function tick(){
+    log = '';
+    
+    cos = Math.cos(p.a);
+    sin = Math.sin(p.a);
+    p.a += Math.PI * ad * 0.01;
+    p.x += (cos * ws + Math.cos(p.a+0.5*Math.PI) * qe) * 0.05;
+    p.y += (sin * ws + Math.sin(p.a+0.5*Math.PI) * qe) * 0.05;
+    
+    log += n(p.x)+' : '+n(p.y)+' : '+n(deg(p.a))+' cos:'+n(cos)+' sin:'+n(sin)+BR;
+    
+    //RENDER
+    
+    mg.clearRect(0, 0, mW, mH);
+    vg.clearRect(0, 0, vW, vH);
+    
+    grid('#000', 0.5);
+    
+    dot(p.x, p.y, '#fff', 8);
+    line(p.x, p.y, p.x + cos*8, p.y + sin*8, '#fff', 0.2);
+    line(p.x, p.y, p.x+Math.cos(p.a - Math.PI*0.5)*8, p.y+Math.sin(p.a - Math.PI*0.5)*8, '#f00', 0.5);
+    line(p.x, p.y, p.x+Math.cos(p.a + Math.PI*0.5)*8, p.y+Math.sin(p.a + Math.PI*0.5)*8, '#f00', 0.5);
+    for(var i=0; i<64; i++){
+        var ang = Math.PI * (1.0/64*i -0.5) + p.a;  
+        line(p.x, p.y, p.x+Math.cos(ang)*8, p.y+Math.sin(ang)*8, '#fff', 0.1);
+    }
+    
+    block(4, 1);
+    block(4, 3);
+    block(5, 1);
+    block(5, 0);
+    block(6, 3);
+    block(6, 2);
+    block(8, 4);
+    block(8, 6);
+    
+    
+    //testing2();
+    
+    if(running){
+        info.innerHTML = log;
+        requestAnimationFrame(tick);
+    }
+    
+    //TOOLS
+    
+    function block(x, y){
+        wall(x+0,y+0,  x+0,y+1, '#f00');
+        wall(x+0,y+1,  x+1,y+1, '#0f0');
+        wall(x+1,y+1,  x+1,y+0, '#00f');
+        wall(x+1,y+0,  x+0,y+0, '#ff0');
+    }
+    
+    function block2(x, y){
+        wall(x+0,y+0,  x+0,y+2, '#f00');
+        wall(x+0,y+2,  x+2,y+2, '#0f0');
+        wall(x+2,y+2,  x+2,y+0, '#00f');
+        wall(x+2,y+0,  x+0,y+0, '#ff0');
+    }
+    
+    function wall(x0, y0, x1, y1, col){
+        col = col || '#888';
+        
+        var xx0 = x0;
+        var yy0 = y0;
+        var xx1 = x1;
+        var yy1 = y1;
+        
+        x0 -= p.x; y0 -= p.y;
+        x1 -= p.x; y1 -= p.y;
+        
+        var ax = y0*cos - x0*sin;
+        var az = x0*cos + y0*sin;
+        var bx = y1*cos - x1*sin;
+        var bz = x1*cos + y1*sin;
+        
+        var zclip = 0.2;
+        
+        /*
+        zz0 = zz0 + (zz1 - zz0) * p;
+        xx0 = xx0 + (xx1 - xx0) * p;
+        */
+        if (az < zclip && bz < zclip) return;
+        
+        if(az < zclip){
+            var k = (zclip - az) / (bz - az);
+            az = zclip;
+            //az = az + (bz - az) * k;
+            ax = ax + (bx - ax) * k;
+        }
+        if(bz < zclip){
+            var k = (zclip - az) / (bz - az);
+            bz = zclip;
+            //bz = az + (bz - az) * k;
+            bx = ax + (bx - ax) * k;
+        }
+        
+        var sx = ax / az;
+        var ex = bx / bz;
+        var vis = !(sx >= ex);
+        
+        var X0 = 20;
+        var Y0 = 8;
+        
+        dot(X0, Y0, '#fff', 4);
+        dot(xx0, yy0, col, 4);
+        mg.fillStyle = '#f0f';
+        mg.fillRect((X0+zclip)*SCALE, Y0*SCALE-128, 0.1, 256);
+        if(vis){
+            dot( (xx0+xx1)/2, (yy0+yy1)/2, '#fff', 4);
+        }
+        if(!vis) return;
+        line(X0+az, Y0+ax, X0+bz, Y0+bx, col, 1);
+        //mg.fillStyle = '#fff';
+        //mg.fillText(n(sx, 1)+' : '+n(ex, 1), (X0+az-1)*SCALE, (Y0+ax)*SCALE);
+        //mg.fillStyle = col;
+        //mg.fillText(': '+vis+' :', (X0+az-0.5)*SCALE, (Y0+ax+0.5)*SCALE);
+    }
+    
+    function dot(x, y, col, size){
+        col = col || '#888';
+        size = size || SCALE/4;
+        x = x*SCALE - size/2;
+        y = y*SCALE - size/2;
+        mg.fillStyle = col;
+        mg.fillRect(x, y, size, size);
+    }
+    
+    function line(x0, y0, x1, y1, col, size){
+        col = col || '#888';
+        size = size || SCALE/8;
+        x0 *= SCALE; y0 *= SCALE;
+        x1 *= SCALE; y1 *= SCALE;
+        
+        mg.strokeStyle = col;
+        mg.lineWidth = size;
+        mg.beginPath();
+        mg.moveTo(x0, y0);
+        mg.lineTo(x1, y1);
+        mg.stroke();
+    }
+    
+    function grid(col, size){
+        col = col || '#888';
+        size = size || SCALE/8;
+        var area = (mW>mH ? mW:mH);
+        mg.strokeStyle = col;
+        mg.lineWidth = size;
+        for(var i=0; i<area; i+=SCALE){
+            mg.strokeRect(i, 0, 1, area);
+            mg.strokeRect(0, i, area, 1);
+        }
+    }
+    
+    //TESTS
+    function testing1(){
+        log = '';
+        
+        var x0 = 2;
+        var y0 = 8;
+        
+        var s = 2; //square size
+        
+        dot(x0, y0);
+        
+        dot(x0, y0, '#000', 8);
+        
+        square(4, -3);
+        square(4, +1);
+        
+        triangle(4, 1);
+        triangle(4, 3);
+        triangle(6, 1);
+        triangle(6, 3);
+        
+        triangle(4, -1);
+        triangle(4, -3);
+        triangle(6, -1);
+        triangle(6, -3);
+        
+        /*
+        square A
+            R	-750	-250	VIS
+            G	-250	-167	VIS
+            B	-167	-500	
+            Y	-500	-750
+
+        square B
+            R	250	    750	    VIS
+            G	750	    500
+            B	500	    167
+            Y	167	    250	    VIS
+        */
+        
+        function triangle(a, b){
+            //line(x0, y0, x0+a, y0, '#f00', 0.5);
+            //line(x0+a, y0, x0+a, y0+b, '#0f0', 0.5);
+            //line(x0+a, y0+b, x0, y0, '#00f', 0.5);
+            var k = b / a;
+            mg.fillStyle = '#fff';
+            mg.fillText(n(k), (x0+a)*SCALE, (y0+b)*SCALE);
+            return k;
+        }
+        
+        function square(x, y){
+            x += x0;
+            y += y0;
+            dot(x+0, y+0, '#400', 12);
+            line(x+0, y+0, x+0, y+s, '#f00', 0.5);
+            
+            dot(x+0, y+s, '#040', 12);
+            line(x+0, y+s, x+s, y+s, '#0f0', 0.5);
+            
+            dot(x+s, y+s, '#004', 12);
+            line(x+s, y+s, x+s, y+0, '#00f', 0.5);
+            
+            dot(x+s, y+0, '#440', 12);
+            line(x+s, y+0, x+0, y+0, '#ff0', 0.5);
+        }   
+    }
+    
+    function testing2(){
+        log = '';
+        
+        var x0 = 2;
+        var y0 = 8;
+        
+        var fov = p.a;
+        var pp = 1;
+        
+        var nc = pp/2/Math.tan(fov/2);
+        
+        var dx = 8;
+        var dy = 6;
+        
+        var _x = dy - y0;
+        var _z = dx - x0;
+        
+        
+        dot(dx, dy, '#fff', 16);
+        px = (pp/2) + (pp/2) * _x / _z / Math.tan(fov/2);
+        
+        log += deg(fov)+' : '+px+' : '+_x+'::'+_z+BR;
+        
+        line(x0, y0, x0+Math.cos(fov/2)*12, y0+Math.sin(fov/2)*12, '#f00', 0.5);
+        line(x0, y0, x0+Math.cos(fov/2)*12, y0-Math.sin(fov/2)*12, '#f00', 0.5);
+        line(x0, y0, dx, dy, '#0f0', 0.5);
+        
+        mg.fillRect(x0*SCALE-2+nc, y0*SCALE-2, 4, 4);
+        mg.fillRect(x0*SCALE-2+nc, y0*SCALE-2+pp/2, 4, 4);
+        mg.fillRect(x0*SCALE-2+nc, y0*SCALE-2-pp/2, 4, 4);
+        
+        mg.fillStyle = '#f00';
+        mg.fillRect(x0*SCALE-2+nc, y0*SCALE-2-pp/2+px, 4, 4);
+        
+        
+        /*
+        0.5*vW + 0.5*vW*R.x/R.z/Math.tan(Math.PI*fov)
+        (pp/2) + (pp/2)*R.x/R.z/Math.tan(Math.PI*fov)
+        
+        
+        proj plane is 1
+        (plane/2) / tan(fov/2)
+        pp/2/Math.tan(fov/2)
+        160/tan30 = 277
+        
+        */
+    }
+}
+
+function start(){
+    if(running) return;
+    running = true;
+    tick();
+}
+
+function stop(){
+    if(!running) return;
+    running = false;
+}
+
+function n(num, d){
+    d = d || 3;
+    return num.toFixed(d);
+}
+    
+function deg(rad){
+    return rad * 180 / Math.PI;
+}
+
+function rad(deg){
+    return deg / 180 * Math.PI;
+}
+
+window.onload = init;
+
+window.onkeydown = function(e){
+    switch(e.keyCode){
+        case 87: ws = +1; break;
+        case 83: ws = -1; break;
+        case 68: ad = +1; break;
+        case 65: ad = -1; break;
+        case 69: qe = +1; break;
+        case 81: qe = -1; break;
+    }
+}
+
+window.onkeyup = function(e){
+    switch(e.keyCode){
+        case 87:
+        case 83: ws = 0; break;
+        case 68:
+        case 65: ad = 0; break;
+        case 69:
+        case 81: qe = 0; break;
+    }
+}
+</script>
