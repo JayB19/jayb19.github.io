@@ -39,7 +39,10 @@ var map = [
 ];
 
 window.onload = init;
-
+window.ontouchmove =function(e){
+  alert('TOUCH');
+}
+   
 function init(){
     g = document.getElementById('canvas').getContext('2d');
     g.canvas.width = W;
