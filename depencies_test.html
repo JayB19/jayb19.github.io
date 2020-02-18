@@ -1,0 +1,158 @@
+<body style='margin: 0px'></body>
+<script>	// server.js
+
+	const Server = {
+
+	}
+
+</script>
+
+<script>	// client.js
+	
+	const Core = {
+
+		init: function(config){
+			Layer.createScreen(
+				config.screen.width,
+				config.screen.height
+			)
+		}
+
+	}
+
+</script>
+
+<script>	// layer.js
+
+	const Layer1 = {
+
+		createScreen: function(width, height){
+			var screen = document.createElement('canvas')
+				screen.width = width
+				screen.height = height
+				screen.style = ''
+					+ 'height: 100%;'
+					+ 'image-rendering: pixelated;'
+			this.ctx = screen.getContext('2d')
+			this.img = new ImageData(width, height)
+			this.buf = new Uint32Array(this.img.data.buffer)
+			document.body.appendChild(screen)
+		},
+
+		render: function(pixels){
+			this.buf.set(pixels)
+			this.ctx.putImageData(this.img, 0, 0)
+		}
+
+	}
+
+</script>
+
+<script>	// layer.js
+
+	const Layer2 = {
+
+		ctx: undefined,
+		img: undefined,
+		buf: undefined,
+
+		createScreen: function(width, height){
+			this.ctx = document.createElement('canvas').getContext('2d')
+			this.ctx.canvas.width = width
+			this.ctx.canvas.height = height
+			this.ctx.canvas.style = ''
+				+ 'height: 100%;'
+				+ 'image-rendering: pixelated;'
+			this.img = new ImageData(width, height)
+			this.buf = new Uint32Array(this.img.data.buffer)
+			document.body.appendChild(this.ctx.canvas)
+		},
+
+		render: function(pixels){
+			this.buf.set(pixels)
+			this.ctx.putImageData(this.img, 0, 0)
+		}
+
+	}
+
+</script>
+
+<script>	// layer without this
+	
+	const Layer3 = {
+
+		render: (function(width, height){
+
+			var screen = document.createElement('canvas')
+			screen.width = width
+			screen.height = height
+			screen.style = ''
+				+ 'height: 100%;'
+				+ 'image-rendering: pixelated;'
+			//document.body.appendChild(screen)
+			var ctx = screen.getContext('2d')
+			var img = new ImageData(width, height)
+			var buf = new Uint32Array(img.data.buffer)
+
+			return function(pixels){
+				buf.set(pixels)
+				ctx.putImageData(img, 0, 0)
+			}
+		})(2, 2)
+
+	}
+	
+</script>
+
+<script>	// layer like module
+	
+	(function(){
+
+		var ctx,
+			img, 
+			buf
+
+		window.LayerM = {
+
+			createScreen: function(width, height){
+				var screen = document.createElement('canvas')
+					screen.width = width
+					screen.height = height
+					screen.style = ''
+						+ 'height: 100%;'
+						+ 'image-rendering: pixelated;'
+				document.body.appendChild(screen)
+				ctx = screen.getContext('2d')
+				img = new ImageData(width, height)
+				buf = new Uint32Array(img.data.buffer)	
+			},
+
+			render: function(pixels){
+				buf.set(pixels)
+				ctx.putImageData(img, 0, 0)
+			}
+
+		}
+	})()
+	
+</script>
+
+<script>	// external
+	
+	const Layer = Layer1
+
+	//colors
+	window.onload = function(){
+		Core.init({
+			screen: {
+				width: 2,
+				height: 2
+			}
+		})
+		Layer.render([
+			0xFF0044dd, 0xFF44dd00,
+			0xFFdd4400, 0xFF00dddd
+		])
+	}
+
+</script>
