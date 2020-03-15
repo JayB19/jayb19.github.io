@@ -1,52 +1,93 @@
 <head>
-  <title>JayB19</title>
-  <meta charset='UTF-8'/>
-  <style>
-    body {
-      background-color: #224;
-      color: #bb8;
-      font: 16px Consolas;
-    }
-    a:link, a:visited {
-      color: #ddd;
-      text-decoration: none;
-    }
-    a:hover, a:active {
-      color: #fff;
-    }
-  </style>
+	<title>JayB19</title>
+	<meta charset='UTF-8'/>
+	<style>
+		* {
+			margin: 0px;
+		}
+		body {
+			background-color: #224;
+			color: #bb8;
+			font: 16px Consolas;
+		}
+		button {
+			background-color: #224;
+			color: #ddd;
+			font: 16px Consolas;
+			border: 0px;
+		}
+		.header {
+			color: #fff;
+		}
+		.disclaimer {
+			color: #f00;
+		}
+
+		a:link, a:visited {
+			color: #ddd;
+			text-decoration: none;
+		}
+		a:hover, a:active {
+			color: #fff;
+		}
+	</style>
 </head>
 
 
 <body>
-  <div class='header'>
-    <h2><p style='color: pink'>JAYB19</p></h2>  
-  </div>
-  <p>Index page for tests:</p>
-  <ul>
-    <li><a href='depencies_test.html'>Hex rpg</a></li>
-    <li><a href='parina_test.html'>Raycasting dev</a></li>
-    <li><a href='test_floor.html'>Benchmark for 2.5D</a></li>
-    <li><a href='vector_test.html'>Polygon graphics engine (N\A)</a></li>
-    <li><a href='console_test.html'>Console engine for TRPG (N\A)</a></li>
-  </ul>
-  <canvas id='cnvs' width='300' height='150'></canvas>
-  <script>
-    var c = document.getElementById('cnvs').getContext('2d');
-    var i = 0;
-    function draw(){
-      if(i>60) i=0;
-      c.fillStyle = '#224';
-      c.fillRect(0,0, 300, 150);
-      c.fillStyle = '#bb8';
-      c.fillRect(i*5, 100, 20, 10);
-      i++;
-      return setTimeout(draw, 20);
-    }
-    
-    var loop = draw();
-    
-    
-  </script>
+
+	<canvas id='cnvs' width='300' height='150'></canvas>
+
+	<div class='header'>
+		<h2><p>JAYB19</p></h2>  
+	</div>
+
+	<a href='depencies_test.html'>		a</a>
+	<a href='parina_test.html'>			b</a>
+	<a href='test_floor.html'>			c</a>
+	<a href='vector_test.html'>			d</a>
+	<a href='console_test.html'>		e</a>
+	<button onclick='start()'>f</button>
+	
+	<p class = 'disclaimer'>THIS PAGE CONTAINS NOTHING<br>AND NEEDED ONLY FOR ENTRY POINT</p>
+
+
+
+	<script>
+
+		function start(){
+			window.open('game/app.html')
+		}
+		
+		var ctx, W, H
+		var running = false
+		var i = 0
+		
+		function run(){
+			if(i>W) i=0
+			ctx.fillStyle = '#224'
+			ctx.fillRect(0,0, W, H)
+			ctx.fillStyle = '#fff'
+			ctx.fillRect(i, 0, -W/20, H)
+			i+=W/200
+			if(running) setTimeout(run, 20)
+		}
+		function stop(){
+			running = false
+		}
+
+
+		window.onload = function(){
+			ctx = document.getElementById('cnvs').getContext('2d')
+			W = window.outerWidth
+			H = 20
+
+			ctx.canvas.width = W
+			ctx.canvas.height = H
+			
+			running = true
+			run()
+		}
+	</script>
 
 </body>
