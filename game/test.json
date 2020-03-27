@@ -1,0 +1,12 @@
+{
+	"name": "test file",
+	"id": 404,
+	"content": {
+		"data": [
+			1, 2, 3,
+			6, 7, 8
+		],
+		"format": "array",
+		"length": 6
+	}
+}
