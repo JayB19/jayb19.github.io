@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Canvas test</title>
+	<style>
+
+		html, body {
+			margin: 0px;
+			width: 100%;
+			height: 100%;
+			background-color: #000000;
+		}
+
+		#canvas {
+			margin: 0px;
+			width: auto;
+			height: 100%;
+			image-rendering: pixelated;
+		}
+	</style>
+</head>
+<body>
+
+	<canvas id='canvas' width=400 height=320></canvas>
+
+	<script>
+
+		var c, g, w, h
+
+		function click(){
+			g.clearRect(0, 0, w, h)
+			g.fillStyle = 'red'
+			var x = Math.round(Math.random() * w)
+			var y = Math.round(Math.random() * h)
+			g.fillRect(x, y, 64, 64)
+			console.log(x, y)
+		}
+		addEventListener('load', function(){
+			c = document.getElementById('canvas')
+			g = c.getContext('2d')
+			w = c.width
+			h = c.height
+			c.addEventListener('touchend', click)
+			c.addEventListener('click', click)
+		})
+	</script>
+
+</body>
+</html>
